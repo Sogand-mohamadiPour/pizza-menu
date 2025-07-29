@@ -68,10 +68,31 @@ function Header() {
 }
 
 function Menu() {
+  const pizzas = pizzaData;
+  const numPizzas = pizzas.length;
+
   return (
     <main className='menu'>
       <h2>Our menu</h2>
-      <Pizza
+
+      {numPizzas > 0 ? (
+        <>
+          <p>
+            Authentic Italian cuisine. 6 creative dishes to choose from.
+            All from our stone oven, all organic, all delicious.
+          </p>
+
+          <ul className='pizzas'>
+            {pizzas.map(pizza => (
+              <Pizza pizzaObj={pizza} key={pizza.name} />
+            ))}
+          </ul>
+        </>
+      ) : <p>we're still working on our menu. Please come back later.</p>}
+
+
+
+      {/* <Pizza
         name='Pizza Spinaci'
         ingredients='Tomato, mozarella, spinach, and ricotta cheese'
         photoName='pizzas/spinaci.jpg'
@@ -83,49 +104,25 @@ function Menu() {
         ingredients='Tomato, mozarella, mushrooms, and onion'
         photoName='pizzas/funghi.jpg'
         price={12}
-      />
+      /> */}
 
-      <Pizza
-        name='Pizza Focaccia'
-        ingredients='Bread with italian olive oil and rosemary'
-        photoName='pizzas/focaccia.jpg'
-        price={6}
-      />
-
-      <Pizza
-        name='Pizza Margherita'
-        ingredients='Tomato and mozarella'
-        photoName='pizzas/margherita.jpg'
-        price={10}
-      />
-
-      <Pizza
-        name='Pizza Salamino'
-        ingredients='Tomato, mozarella, and pepperoni'
-        photoName='pizzas/salamino.jpg'
-        price={15}
-      />
-
-      <Pizza
-        name='Pizza Prosciutto'
-        ingredients='Tomato, mozarella, ham, aragula, and burrata cheese'
-        photoName='pizzas/prosciutto.jpg'
-        price={18}
-      />
     </main>
   );
 }
 
-function Pizza(props) {
+function Pizza({ pizzaObj }) {
+
+  if (pizzaObj.soldOut) return null;
+
   return (
-    <div className='pizza'>
-      <img src={props.photoName} alt={props.name} />
+    <li className='pizza'>
+      <img src={pizzaObj.photoName} alt={pizzaObj.name} />
       <div>
-        <h3>{props.name}</h3>
-        <p>{props.ingredients}</p>
-        <span>{props.price + 3}</span>
+        <h3>{pizzaObj.name}</h3>
+        <p>{pizzaObj.ingredients}</p>
+        <span>{pizzaObj.price + 3}</span>
       </div>
-    </div>
+    </li>
   );
 }
 
@@ -136,20 +133,31 @@ function Footer() {
   const isOpen = hour >= openHour && hour <= closeHour;
   console.log(isOpen);
 
-  // if(hour >= openHour &&  hour <= closeHour) 
-  //   alert('we are currently open!')
-  // else 
-  //   alert('sorry we are closed')
 
-  return <>
+  return (<>
     <footer className='footer'>
-      {new Date().toLocaleTimeString() + '. we are currently open!'}
-    </footer>
+      {isOpen ? (
+        <Order closeHour={closeHour} />
+      ) : (
+        <p>
+          We are happy to welcome you between {openHour}:00 and {closeHour}:00.
+        </p>
+      )}
+    </footer >
   </>
+  )
 }
 
-
-
+function Order({ closeHour }) {
+  return (
+    <div className='order'>
+      <p>
+        We're open until {closeHour}:00. Come visit us or order online
+      </p>
+      <button className='btn'>Order</button>
+    </div>
+  )
+}
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -158,8 +166,3 @@ root.render(
     <App />
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals();
